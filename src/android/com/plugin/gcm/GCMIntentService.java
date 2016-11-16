@@ -12,7 +12,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
+import android.content.res.Resources;
+import android.net.Uri;
 import com.google.android.gcm.GCMBaseIntentService;
 
 @SuppressLint("NewApi")
@@ -100,7 +101,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 		
 		NotificationCompat.Builder mBuilder =
 			new NotificationCompat.Builder(context)
-				.setDefaults(defaults)
 				.setSmallIcon(context.getApplicationInfo().icon)
 				.setWhen(System.currentTimeMillis())
 				.setContentTitle(extras.getString("title"))
@@ -119,7 +119,14 @@ public class GCMIntentService extends GCMBaseIntentService {
 		if (msgcnt != null) {
 			mBuilder.setNumber(Integer.parseInt(msgcnt));
 		}
+		String soundName = extras.getString("sound");
 		
+		if (soundName != null) {
+				Resources r = getResources();
+				int resourceId = r.getIdentifier(soundName, "raw", context.getPackageName());
+				Uri soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resourceId);
+				mBuilder.setSound(soundUri);
+		}
 		int notId = 0;
 		
 		try {
